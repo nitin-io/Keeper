@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 function InputArea(props) {
   const [note, setNote] = useState({});
+  const [editing, setEditing] = useState(false)
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -39,14 +40,19 @@ function InputArea(props) {
           name="title"
           placeholder="Title"
           value={note.title}
+          onFocus={() => setEditing(true)}
+          onBlur={() => {
+            if (!note.title)
+              setEditing(!false)
+          }}
         />
-        <input
+        {editing && <input
           type="text"
           onChange={handleChange}
           name="content"
           placeholder="Add your note..."
           value={note.content}
-        />
+        />}
         <button className="add-btn">Add</button>
       </form>
     </div>
