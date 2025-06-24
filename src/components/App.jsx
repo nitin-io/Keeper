@@ -4,23 +4,35 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import InputArea from "./InputArea";
+import { deleteNote, getNotes, saveNote } from "../utils/storage";
+import { useEffect } from "react";
 
 function App() {
   const [notes, setNotes] = useState([]);
 
   function handleSubmit(note) {
+    if (!note.title || !note.content) {
+      return;
+    }
+    note.key = Date.now()
+    saveNote(note);
     setNotes((prevValues) => {
       return [...prevValues, note];
     });
   }
 
-  function handleDelete(id){
+  function handleDelete(id) {
+    deleteNote(id);
     setNotes(() => {
-          return notes.filter((note, index) => {
-            return index !== id;
-          })       
+      return notes.filter((note) => {
+        return note.key !== id;
+      });
     });
-}
+  }
+
+  useEffect(() => {
+    setNotes(getNotes());
+  }, []);
 
   return (
     <div>
@@ -29,7 +41,7 @@ function App() {
       {notes.map((note, index) => (
         <Note
           key={uuidv4()}
-          id={index}
+          id={note.key}
           title={note.title}
           content={note.content}
           delete={handleDelete}
